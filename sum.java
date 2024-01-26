@@ -6,6 +6,6 @@ public class sum {
        
        //int c = a + b;
        
-       System.out.println(String.valueOf(Integer.parseInt(args[0])+Integer.parseInt(args[1])));
+       System.out.println(String.valueOf(Integer.parseInt(args[0])/Integer.parseInt(args[1])));
     }
 }
