@@ -22,7 +22,7 @@ public class Battleship {
         System.out.println("   +-+-+-+-+-+-+-+-+-+-+      +-+-+-+-+-+-+-+-+-+-+");
     }
 
-    static int getMaxSurroundigColumn(final Coordinate start, final Coordinate end) {
+    static int getMaxSurroundingColumn(final Coordinate start, final Coordinate end) {
         return Math.min(Math.max(start.column(), end.column()) + 1, SIZE - 1);
     }
 
@@ -31,10 +31,10 @@ public class Battleship {
     }
 
     static int getMinSurroundingColumn(final Coordinate start, final Coordinate end) {
-        return Math.max(Math.min(start.column(), end.column()) - 1, SIZE -SIZE);
+        return Math.max(Math.min(start.column(), end.column()) - 1, 0);
     }
 
     static int getMinSurroundingRow(final Coordinate start, final Coordinate end) {
-        return Math.max(Math.min(start.row(), end.row()) - 1, SIZE - SIZE);
+        return Math.max(Math.min(start.row(), end.row()) - 1, 0);
     }
 }
