@@ -49,14 +49,14 @@ public class Battleship {
     }
 
     static final String ENTER_SHIP_COORDINATE_PROMPT =
-    "Geben Sie die %skoordinaten für ein Schiff der Länge %d ein: ";
+        "Geben Sie die %skoordinaten für ein Schiff der Länge %d ein: ";
     
     static String getStartCoordinatePrompt( final int length) {
-    return String.format (ENTER_SHIP_COORDINATE_PROMPT,"Start",length);
-}
+        return String.format (ENTER_SHIP_COORDINATE_PROMPT,"Start",length);
+    }
 
     static String getEndCoordinatePrompt( final int length) {
-    return String.format (ENTER_SHIP_COORDINATE_PROMPT,"End",length);
-}
+        return String.format (ENTER_SHIP_COORDINATE_PROMPT,"End",length);
+    }
 
 }
