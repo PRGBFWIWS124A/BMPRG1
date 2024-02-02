@@ -37,4 +37,26 @@ public class Battleship {
     static int getMinSurroundingRow(final Coordinate start, final Coordinate end) {
         return Math.max(Math.min(start.row(), end.row()) - 1, 0);
     }
+
+    static Coordinate toCoordinate(final String input){
+        int column = input.toLowerCase().charAt(0) - 'a';
+        int row = Integer.parseInt(input.substring(1)) - 1;
+                return new Coordinate(column, row);
+    }
+
+    static boolean isValidCoordinate(final String input) {
+        return input.toUpperCase().matches("[A-J](10|[1-9])");
+    }
+
+    static final String ENTER_SHIP_COORDINATE_PROMPT =
+    "Geben Sie die %skoordinaten für ein Schiff der Länge %d ein: ";
+    
+    static String getStartCoordinatePrompt( final int length) {
+    return String.format (ENTER_SHIP_COORDINATE_PROMPT,"Start",length);
+}
+
+    static String getEndCoordinatePrompt( final int length) {
+    return String.format (ENTER_SHIP_COORDINATE_PROMPT,"End",length);
+}
+
 }
