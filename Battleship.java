@@ -200,4 +200,72 @@ public class Battleship {
         }
         return true;
     }
+    static void setAllFree(final Field[][] field) {
+        for(int row = 0; row < SIZE; row++) {
+            for(int column = 0; column < SIZE; column++) {
+                field[row][column] = Field.FREE;
+            }
+        }
+    }
+
+    static int countHits(final Field[][] field) {
+        int result = 0;
+        for(int row = 0; row <= SIZE -1; row++) {
+            for(int column = 0; column <= SIZE -1; column++) {
+                if (Field.SHIP_HIT == field[row][column]) {
+                    result++;
+                }
+            }
+        }
+        return result;
+    }
+
+    static void fillWaterHits(final Coordinate shot, final Field[][] field) {
+        int row = shot.row();
+        int column = shot.column();
+        while (row > 0 && Field.SHIP_HIT == field[row][column]) {
+            row--;
+        }
+        int minRow = row;
+        row = shot.row();
+        column = shot.column();
+        while (row < SIZE - 1 && Field.SHIP_HIT == field[row][column]) {
+            row++;
+        }
+        int maxRow = row;
+        row = shot.row();
+        column = shot.column();
+        while (column < SIZE - 1 && Field.SHIP_HIT == field[row][column]) {
+            column++;
+        }
+        int minColumn = column;
+        row = shot.row();
+        column = shot.column();
+        while (column > 0 && Field.SHIP_HIT == field[row][column]) {
+            column--;
+        }
+        int maxColumn = column;
+        for(row = minRow; row <= maxRow; row++) {
+            for(column = minColumn; column <= maxColumn; column++) {
+                if(field[row][column] == Field.FREE) {
+                    field[row][column] = Field.WATER_HIT;
+                }
+            }
+        }
+    }
+
+    static boolean noConflict(final Coordinate start, final Coordinate end, final Field[][] field) {
+            for(int column = getMinSurroundingColumn(start,end); 
+            column <= getMaxSurroundingColumn(start, end) ; 
+            column++){
+                for(int row = getMinSurroundingRow(start,end);
+                row <= getMaxSurroundingRow(start, end);
+                row++){
+                    if(field[column][row] != Field.FREE){
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
 }
