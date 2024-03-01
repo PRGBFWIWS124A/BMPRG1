@@ -100,7 +100,7 @@ public class Battleship {
         }
         return new Coordinate(start.column(), start.row() + distance);
     }
-    
+
     static void showField(final Field field, final boolean showShips) {
         switch (field) {
             case Field.SHIP:
@@ -126,15 +126,78 @@ public class Battleship {
             case Field.SHIP:
                 field[shot.row()][shot.column()] = Field.SHIP_HIT;
                 break;
-                default:
+            default:
         }
     }
 
     static void placeShip(final Coordinate start, final Coordinate end, final Field[][] field) {
-        for(int i = Math.min(start.row(), end.row()); i < Math.max(start.row(), end.row()); i++) {
+        for (int i = Math.min(start.row(), end.row()); i < Math.max(start.row(), end.row()); i++) {
             for (int j = Math.min(start.column(), end.column()); j < Math.max(start.column(), end.column()); j++) {
                 field[i][j] = Field.SHIP;
             }
         }
+    }
+
+    static void showRow(final int row, final Field[][] ownField, final Field[][] otherField) {
+        showRowNumber(row);
+        System.out.print(" |");
+        for (int i = 0; i < SIZE; i++) {
+            showField(ownField[row][i], true);
+            System.out.print("|");
+        }
+        System.out.print("   ");
+        showRowNumber(row);
+        System.out.print(" |");
+        for (int i = 0; i < SIZE; i++) {
+            showField(otherField[row][i], false);
+            System.out.print("|");
+        }
+        System.out.println();
+    }
+
+    static void showFields(final Field[][] ownField, final Field[][] otherField) {
+        System.out.println("    A B C D E F G H I J        A B C D E F G H I J");
+        for (int i = 0; i < SIZE; i++) {
+            showSeperatorLine();
+            showRow(i, ownField, otherField);
+        }
+        showSeperatorLine();
+        System.out.println();
+    }
+
+    static boolean shipSunk(final Coordinate shot, final Field[][] field) {
+        int row = shot.row();
+        int column = shot.column();
+        while (row > 0 && Field.SHIP_HIT == field[row][column]) {
+            row--;
+        }
+        if (Field.SHIP == field[row][column]) {
+            return false;
+        }
+        row = shot.row();
+        column = shot.column();
+        while (row < SIZE - 1 && Field.SHIP_HIT == field[row][column]) {
+            row++;
+        }
+        if (Field.SHIP == field[row][column]) {
+            return false;
+        }
+        row = shot.row();
+        column = shot.column();
+        while (column < SIZE - 1 && Field.SHIP_HIT == field[row][column]) {
+            column++;
+        }
+        if (Field.SHIP == field[row][column]) {
+            return false;
+        }
+        row = shot.row();
+        column = shot.column();
+        while (column > 0 && Field.SHIP_HIT == field[row][column]) {
+            column--;
+        }
+        if (Field.SHIP == field[row][column]) {
+            return false;
+        }
+        return true;
     }
 }
