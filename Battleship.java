@@ -1,3 +1,5 @@
+import java.io.IOException;
+
 public class Battleship {
 
     public static void main(String[] args) {
@@ -10,8 +12,8 @@ public class Battleship {
 
     static final int SIZE = 10;
 
-    static Coordinate getRandomInt(int Random) {
-        return new Coordinate(Utility.getRandomInt(SIZE), Utility.getRandomInt(SIZE));
+    static Coordinate getRandomCoordinate(int Random) {
+        return new Coordinate(Utility.getRandomCoordinate(SIZE), Utility.getRandomCoordinate(SIZE));
     }
 
     static boolean onOneLine(final Coordinate start, final Coordinate end) {
@@ -125,6 +127,9 @@ public class Battleship {
                 break;
             case Field.SHIP:
                 field[shot.row()][shot.column()] = Field.SHIP_HIT;
+                if (shipSunk(shot, field)) {
+                    fillWaterHits(shot, field);
+                }
                 break;
             default:
         }
@@ -200,9 +205,10 @@ public class Battleship {
         }
         return true;
     }
+
     static void setAllFree(final Field[][] field) {
-        for(int row = 0; row < SIZE; row++) {
-            for(int column = 0; column < SIZE; column++) {
+        for (int row = 0; row < SIZE; row++) {
+            for (int column = 0; column < SIZE; column++) {
                 field[row][column] = Field.FREE;
             }
         }
@@ -210,8 +216,8 @@ public class Battleship {
 
     static int countHits(final Field[][] field) {
         int result = 0;
-        for(int row = 0; row <= SIZE -1; row++) {
-            for(int column = 0; column <= SIZE -1; column++) {
+        for (int row = 0; row <= SIZE - 1; row++) {
+            for (int column = 0; column <= SIZE - 1; column++) {
                 if (Field.SHIP_HIT == field[row][column]) {
                     result++;
                 }
@@ -245,9 +251,9 @@ public class Battleship {
             column--;
         }
         int maxColumn = column;
-        for(row = minRow; row <= maxRow; row++) {
-            for(column = minColumn; column <= maxColumn; column++) {
-                if(field[row][column] == Field.FREE) {
+        for (row = minRow; row <= maxRow; row++) {
+            for (column = minColumn; column <= maxColumn; column++) {
+                if (field[row][column] == Field.FREE) {
                     field[row][column] = Field.WATER_HIT;
                 }
             }
@@ -255,17 +261,91 @@ public class Battleship {
     }
 
     static boolean noConflict(final Coordinate start, final Coordinate end, final Field[][] field) {
-            for(int column = getMinSurroundingColumn(start,end); 
-            column <= getMaxSurroundingColumn(start, end) ; 
-            column++){
-                for(int row = getMinSurroundingRow(start,end);
-                row <= getMaxSurroundingRow(start, end);
-                row++){
-                    if(field[column][row] != Field.FREE){
-                        return false;
+        for (int column = getMinSurroundingColumn(start, end); column <= getMaxSurroundingColumn(start,
+                end); column++) {
+            for (int row = getMinSurroundingRow(start, end); row <= getMaxSurroundingRow(start, end); row++) {
+                if (field[column][row] != Field.FREE) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    static Coordinate readCoordinate(final String prompt) {
+        String eingabe = "";
+        while (!isValidCoordinate(eingabe)) {
+            System.out.println(prompt);
+            try {
+                eingabe = Utility.readStringFromConsole();
+            } catch (IOException e) {
+                eingabe = "";
+            }
+        }
+        return toCoordinate(eingabe);
+    }
+
+    static Coordinate getRandomUnshotCoordinate(final Field[][] field) {
+        int chances = 0;
+        for (int row = 0; row < field.length; row++) {
+            for (int column = 0; column < field[0].length; column++) {
+                if (field[row][column] == Field.FREE || field[row][column] == Field.SHIP) {
+                    chances++;
+                }
+            }
+        }
+        int rand = Utility.getRandomInt(chances);
+        for (int row = 0; row < field.length; row++) {
+            for (int column = 0; column < field[0].length; column++) {
+                if (field[row][column] == Field.FREE || field[row][column] == Field.SHIP) {
+                    rand--;
+                    if (rand < 0) {
+                        return new Coordinate(column, row);
                     }
                 }
             }
-            return true;
         }
+        throw new IllegalStateException();
+    }
+
+    static Coordinate readEndCoordinate(final int length) {
+       return readCoordinate(getEndCoordinatePrompt(length));
+    }
+
+    static Coordinate readStartCoordinate(final int length) {
+        return readCoordinate(getStartCoordinatePrompt(length));
+     }
+
+    static final int All_Hit = 14;
+
+    static boolean allHit(final Field[][] field) {
+        return countHits(field) == All_Hit;
+     }
+
+    static boolean endCondition(final Field[][] ownField, final Field[][] otherField) {
+        return allHit(otherField) || allHit(ownField);
+    }
+
+    static boolean validPosition(final Coordinate start, final Coordinate end, final int length, final Field[][] field) {
+        return noConflict(start, end, field) && distance(start, end) == length -1 && onOneLine(start, end);
+    }
+
+    static void turn(final Field[][] ownField, final Field[][] otherField) {
+        showFields(ownField, otherField);
+        shot(readCoordinate("Geben sie eine Coordinate an."), otherField);
+        shot(getRandomUnshotCoordinate(ownField), ownField);
+    }
+
+    static void outputWinner(final Field[][] ownField, final Field[][] otherField) {
+        showFields(ownField, otherField);
+        if(allHit(otherField)) {
+            System.out.println("DU HAST GEWONNEN!!!");
+        } else if (allHit(ownField)) {
+            System.out.println("DER COMPUTER HAT GEWONNEN!!!");
+        }
+    }
+
+    static Field[][] initOtherField() {
+       placeShip(get, null, null); 
+    }
 }
