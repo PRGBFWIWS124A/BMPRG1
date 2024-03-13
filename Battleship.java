@@ -3,7 +3,13 @@ import java.io.IOException;
 public class Battleship {
 
     public static void main(String[] args) {
-
+        System.out.println();
+        final Field[][] otherField = initOtherField();
+        final Field[][] ownField = initOwnField(otherField);
+        while (!endCondition(ownField, otherField)) {
+            turn(ownField, otherField);
+        }
+        outputWinner(ownField, otherField);
     }
 
     static int distance(final Coordinate start, final Coordinate end) {
@@ -12,8 +18,8 @@ public class Battleship {
 
     static final int SIZE = 10;
 
-    static Coordinate getRandomCoordinate(int Random) {
-        return new Coordinate(Utility.getRandomCoordinate(SIZE), Utility.getRandomCoordinate(SIZE));
+    static Coordinate getRandomCoordinate() {
+        return new Coordinate(Utility.getRandomInt(SIZE), Utility.getRandomInt(SIZE));
     }
 
     static boolean onOneLine(final Coordinate start, final Coordinate end) {
@@ -346,6 +352,33 @@ public class Battleship {
     }
 
     static Field[][] initOtherField() {
-       placeShip(get, null, null); 
+        final Field[][] otherField = new Field[SIZE][SIZE];
+        setAllFree(otherField);
+        for (int length = 5; length > 1; length--) {
+            final Coordinate start = getRandomCoordinate();
+            final Coordinate end = getRandomEndCoordinate(start, length - 1);
+            if (validPosition(start, end, length, otherField)) {
+                placeShip(start, end, otherField);
+            } else {
+                length++;
+            }
+        }
+        return otherField;
+    }
+    
+    static Field[][] initOwnField(final Field[][] otherField) {
+        final Field[][] ownField = new Field[SIZE][SIZE];
+        setAllFree(ownField);
+        for (int length = 5; length > 1; length--) {
+            showFields(ownField, otherField);
+            final Coordinate start = readStartCoordinate(length);
+            final Coordinate end = readEndCoordinate(length);
+            if (validPosition(start, end, length, ownField)) {
+                placeShip(start, end, ownField);
+            } else {
+                length++;
+            }
+        }
+        return ownField;
     }
 }
