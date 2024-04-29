@@ -1,4 +1,4 @@
-public class Aufgabe2b {
+public class Aufgabe_2 {
     public static void main(String[] args) {
         System.out.println("Gib eine Gesamtbreite ein:");
         String Eingabe = Utility.readStringFromConsole();
